@@ -1,0 +1,614 @@
+{
+	"openapi": "3.0.2",
+	"info": {
+		"title": "Omen Engine Hub API Draft",
+		"version": "0.1.0"
+	},
+	"servers": [
+		{
+			"url": "http://hub.example.com:{port}/api",
+			"variables": {
+				"port": {
+					"enum": [
+						"80",
+						"443",
+						"8080",
+						"8443"
+					],
+					"default": "80"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/product/{model}": {
+			"parameters": [
+				{
+					"$ref": "#/components/parameters/app"
+				},
+				{
+					"$ref": "#/components/parameters/time"
+				},
+				{
+					"$ref": "#/components/parameters/sign"
+				},
+				{
+					"$ref": "#/components/parameters/product.model"
+				}
+			],
+			"get": {
+				"description": "查询所有指定Model的生产列表",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/product"
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": ["Product"]
+			},
+			"post": {
+				"description": "发起一次生产",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/product"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/product"
+					}
+				},
+				"tags": ["Product"]
+			}
+		},
+		"/product/{model}/{productId}": {
+			"parameters": [
+				{
+					"$ref": "#/components/parameters/app"
+				},
+				{
+					"$ref": "#/components/parameters/time"
+				},
+				{
+					"$ref": "#/components/parameters/sign"
+				},
+				{
+					"$ref": "#/components/parameters/product.model"
+				},
+				{
+					"$ref": "#/components/parameters/product.id"
+				}
+			],
+			"get": {
+				"description": "查询指定的生产",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/product"
+					}
+				},
+				"tags": ["Product"]
+			},
+			"delete": {
+				"description": "尝试停止并删除指定productId的生产",
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/product"
+					}
+				},
+				"tags": ["Product"]
+			}
+		},
+		"/product/{model}/{productId}/order": {
+			"parameters": [
+				{
+					"$ref": "#/components/parameters/app"
+				},
+				{
+					"$ref": "#/components/parameters/time"
+				},
+				{
+					"$ref": "#/components/parameters/sign"
+				},
+				{
+					"$ref": "#/components/parameters/product.model"
+				},
+				{
+					"$ref": "#/components/parameters/product.id"
+				}
+			],
+			"get": {
+				"description": "查询该生产的工单",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"$ref": "#/components/responses/order"
+					}
+				},
+				"tags": ["Order"]
+			},
+			"post": {
+				"description": "为该生产创建工单",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/order"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"$ref": "#/components/responses/order"
+					}
+				},
+				"tags": ["Order"]
+			}
+		},
+		"/product/{model}/{productId}/artifact": {
+			"parameters": [
+				{
+					"$ref": "#/components/parameters/app"
+				},
+				{
+					"$ref": "#/components/parameters/time"
+				},
+				{
+					"$ref": "#/components/parameters/sign"
+				},
+				{
+					"$ref": "#/components/parameters/product.model"
+				},
+				{
+					"$ref": "#/components/parameters/product.id"
+				}
+			],
+			"get": {
+				"description": "查询本次生产的制成品",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"$ref": "#/components/responses/artifact"
+					}
+				},
+				"tags": ["Artifact"]
+			}
+		},
+		"/product/{model}/{productId}/job": {
+			"parameters": [
+				{
+					"$ref": "#/components/parameters/app"
+				},
+				{
+					"$ref": "#/components/parameters/time"
+				},
+				{
+					"$ref": "#/components/parameters/sign"
+				},
+				{
+					"$ref": "#/components/parameters/product.model"
+				},
+				{
+					"$ref": "#/components/parameters/product.id"
+				}
+			],
+			"get": {
+				"description": "获取该生产的作业列表",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/job"
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": ["Job"]
+			}
+		},
+		"/product/{model}/{productId}/job/{jobId}": {
+			"parameters": [
+				{
+					"$ref": "#/components/parameters/app"
+				},
+				{
+					"$ref": "#/components/parameters/time"
+				},
+				{
+					"$ref": "#/components/parameters/sign"
+				},
+				{
+					"$ref": "#/components/parameters/product.model"
+				},
+				{
+					"$ref": "#/components/parameters/product.id"
+				},
+				{
+					"$ref": "#/components/parameters/job.id"
+				}
+			],
+			"get": {
+				"description": "查询指定jobId的作业",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"$ref": "#/components/responses/job"
+					}
+				},
+				"tags": ["Job"]
+			}
+		}
+	},
+	"components": {
+		"parameters": {
+			"time": {
+				"name": "time",
+				"in": "query",
+				"required": true,
+				"schema": {
+					"type": "string",
+					"pattern": "^[0-9]+$"
+				},
+				"description": "请求时间戳，{n}毫秒内有效"
+			},
+			"app": {
+				"name": "app",
+				"in": "query",
+				"required": true,
+				"schema": {
+					"type": "string"
+				},
+				"description": "Application的Id"
+			},
+			"sign": {
+				"name": "sign",
+				"in": "query",
+				"required": true,
+				"schema": {
+					"type": "string",
+					"pattern": "^[a-fA-F0-9]+$"
+				},
+				"description": "Application对时间戳的数字签名"
+			},
+			"product.model": {
+				"name": "model",
+				"in": "path",
+				"required": true,
+				"schema": {
+					"type": "string",
+					"enum": [
+						"source",
+						"binary"
+					]
+				},
+				"description": "产品型号：source是源码扫描报告，binary是二进制扫描报告。"
+			},
+			"product.id": {
+				"name": "productId",
+				"in": "path",
+				"required": true,
+				"schema": {
+					"type": "string"
+				},
+				"description": "一次生产的Id"
+			},
+			"job.id": {
+				"name": "jobId",
+				"in": "path",
+				"required": true,
+				"schema": {
+					"type": "string"
+				},
+				"description": "一个作业的Id"
+			}
+		},
+		"responses": {
+			"product": {
+				"description": "OK",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/product"
+						}
+					}
+				}
+			},
+			"order": {
+				"description": "OK",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/order"
+						}
+					}
+				}
+			},
+			"artifact": {
+				"description": "OK",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/artifact"
+						}
+					}
+				}
+			},
+			"job": {
+				"description": "OK",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/job"
+						}
+					}
+				}
+			}
+		},
+		"schemas": {
+			"at": {
+				"type": "string",
+				"format": "ISOString",
+				"nullable": true,
+				"readOnly": true,
+				"description": "ISO标准时间戳"
+			},
+			"id": {
+				"type": "string",
+				"format": "Hex",
+				"readOnly": true
+			},
+			"message": {
+				"type": "string",
+				"readOnly": true,
+				"nullable": true
+			},
+			"product": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"$ref": "#/components/schemas/id"
+					},
+					"createdAt": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/at",
+							},
+							{
+								"description": "创建时间"
+							}
+						]
+					},
+					"orderedAt": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/at"
+							},
+							{
+								"description": "下单时间"
+							}
+						]
+					},
+					"finishedAt": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/at"
+							},
+							{
+								"description": "结束时间"
+							}
+						]
+					},
+					"status": {
+						"type": "number",
+						"enum": [
+							0,
+							100,
+							201,
+							202,
+							203,
+							204
+						],
+						"nullable": true,
+						"readOnly": true
+					},
+					"message": {
+						"$ref": "#/components/schemas/message"
+					}
+				},
+				"additionalProperties": false
+			},
+			"order.source": {
+				"type": "object",
+				"properties": {
+					"url": {
+						"description": ""
+					}
+				}
+			},
+			"order.binary": {
+				"type": "object",
+				"properties": {
+					"url": {
+						"description": ""
+					}
+				}
+			},
+			"order": {
+				"oneOf": [
+					{
+						"$ref": "#/components/schemas/order.source"
+					},
+					{
+						"$ref": "#/components/schemas/order.binary"
+					}
+				]
+			},
+			"artifact.source": {
+				"type": "object",
+				"properties": {
+					"url": {
+						"description": ""
+					}
+				}
+			},
+			"artifact.binary": {
+				"type": "object",
+				"properties": {
+					"url": {
+						"description": ""
+					}
+				}
+			},
+			"artifact": {
+				"oneOf": [
+					{
+						"$ref": "#/components/schemas/order.source"
+					},
+					{
+						"$ref": "#/components/schemas/order.binary"
+					}
+				]
+			},
+			"job": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"$ref": "#/components/schemas/id"
+					},
+					"productId": {
+						"$ref": "#/components/schemas/id"
+					},
+					"craft": {
+						"type": "string",
+						"readOnly": true,
+						"description": "工艺"
+					},
+					"createdAt": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/at"
+							},
+							{
+								"description": "创建时间"
+							}
+						]
+					},
+					"visitedAt": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/at"
+							},
+							{
+								"description": "访问时间"
+							}
+						]
+					},
+					"assignedAt": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/at"
+							},
+							{
+								"description": "分配时间"
+							}
+						]
+					},
+					"startedAt": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/at"
+							},
+							{
+								"description": "开始时间"
+							}
+						]
+					},
+					"finishedAt": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/at"
+							},
+							{
+								"description": "结束时间"
+							}
+						]
+					},
+					"archivedAt": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/at"
+							},
+							{
+								"description": "归档时间"
+							}
+						]
+					},
+					"status": {
+						"type": "number",
+						"enum": [
+							0,
+							100,
+							201,
+							202,
+							203,
+							204
+						],
+						"nullable": true,
+						"readOnly": true
+					},
+					"message": {
+						"$ref": "#/components/schemas/message"
+					},
+					"extension": {
+						"nullable": true
+					}
+				},
+				"additionalProperties": false
+			}
+		}
+	},
+	"tags": [
+		{
+			"name": "Product",
+			"description": "生产"
+		},
+		{
+			"name": "Order",
+			"description": "生产的工单"
+		},
+		{
+			"name": "Artifact",
+			"description": "生产的制成品"
+		},
+		{
+			"name": "Job",
+			"description": "生产的作业"
+		}
+	]
+}
