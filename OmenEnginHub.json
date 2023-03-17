@@ -21,6 +21,45 @@
 		}
 	],
 	"paths": {
+		"/authentication": {
+			"parameters": [
+				{
+					"$ref": "#/components/parameters/app"
+				},
+				{
+					"$ref": "#/components/parameters/time"
+				},
+				{
+					"$ref": "#/components/parameters/sign"
+				}
+			],
+			"get": {
+				"description": "尝试测试认证",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"plain/text": {
+								"type": "string",
+								"constant": "OK"
+							}
+						}
+					},
+					"400": {
+						"$ref": "#/components/responses/bad-credential-parameters"
+					},
+					"408": {
+						"$ref": "#/components/responses/request-timeout"
+					},
+					"401": {
+						"$ref": "#/components/responses/bad-credential"
+					}
+				},
+				"tags": [
+					"Development"
+				]
+			}
+		},
 		"/product/{model}": {
 			"parameters": [
 				{
@@ -51,9 +90,23 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"$ref": "#/components/responses/bad-credential-parameters"
+					},
+					"408": {
+						"$ref": "#/components/responses/request-timeout"
+					},
+					"401": {
+						"$ref": "#/components/responses/bad-credential"
+					},
+					"404": {
+						"$ref": "#/components/responses/no-model"
 					}
 				},
-				"tags": ["Product"]
+				"tags": [
+					"Product"
+				]
 			},
 			"post": {
 				"description": "发起一次生产",
@@ -68,11 +121,28 @@
 					}
 				},
 				"responses": {
-					"200": {
+					"201": {
 						"$ref": "#/components/responses/product"
+					},
+					"400": {
+						"$ref": "#/components/responses/bad-credential-parameters"
+					},
+					"408": {
+						"$ref": "#/components/responses/request-timeout"
+					},
+					"401": {
+						"$ref": "#/components/responses/bad-credential"
+					},
+					"404": {
+						"$ref": "#/components/responses/no-model"
+					},
+					"429": {
+						"$ref": "#/components/responses/full-queue"
 					}
 				},
-				"tags": ["Product"]
+				"tags": [
+					"Product"
+				]
 			}
 		},
 		"/product/{model}/{productId}": {
@@ -99,18 +169,81 @@
 				"responses": {
 					"200": {
 						"$ref": "#/components/responses/product"
+					},
+					"400": {
+						"$ref": "#/components/responses/bad-credential-parameters"
+					},
+					"408": {
+						"$ref": "#/components/responses/request-timeout"
+					},
+					"401": {
+						"$ref": "#/components/responses/bad-credential"
+					},
+					"404": {
+						"$ref": "#/components/responses/no-model"
+					},
+					"404.1": {
+						"$ref": "#/components/responses/no-product"
 					}
 				},
-				"tags": ["Product"]
-			},
-			"delete": {
-				"description": "尝试停止并删除指定productId的生产",
+				"tags": [
+					"Product"
+				]
+			}
+		},
+		"/product/{model}/{productId}/state": {
+			"parameters": [
+				{
+					"$ref": "#/components/parameters/app"
+				},
+				{
+					"$ref": "#/components/parameters/time"
+				},
+				{
+					"$ref": "#/components/parameters/sign"
+				}
+			],
+			"put": {
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/product.state"
+							}
+						}
+					}
+				},
+				"description": "尝试停止指定productId的生产",
 				"responses": {
 					"200": {
-						"$ref": "#/components/responses/product"
+						"$ref": "#/components/responses/state"
+					},
+					"400": {
+						"$ref": "#/components/responses/bad-credential-parameters"
+					},
+					"408": {
+						"$ref": "#/components/responses/request-timeout"
+					},
+					"401": {
+						"$ref": "#/components/responses/bad-credential"
+					},
+					"404": {
+						"$ref": "#/components/responses/no-model"
+					},
+					"404.1": {
+						"$ref": "#/components/responses/no-product"
+					},
+					"400.1": {
+						"description": "错误的状态对象"
+					},
+					"403": {
+						"description": "生产已经结束"
 					}
 				},
-				"tags": ["Product"]
+				"tags": [
+					"Product"
+				]
 			}
 		},
 		"/product/{model}/{productId}/order": {
@@ -136,11 +269,30 @@
 				"parameters": [],
 				"responses": {
 					"200": {
-						"description": "OK",
 						"$ref": "#/components/responses/order"
+					},
+					"400": {
+						"$ref": "#/components/responses/bad-credential-parameters"
+					},
+					"408": {
+						"$ref": "#/components/responses/request-timeout"
+					},
+					"401": {
+						"$ref": "#/components/responses/bad-credential"
+					},
+					"404": {
+						"$ref": "#/components/responses/no-model"
+					},
+					"404.1": {
+						"$ref": "#/components/responses/no-product"
+					},
+					"404.2": {
+						"description": "还没下单"
 					}
 				},
-				"tags": ["Order"]
+				"tags": [
+					"Order"
+				]
 			},
 			"post": {
 				"description": "为该生产创建工单",
@@ -155,12 +307,37 @@
 					}
 				},
 				"responses": {
-					"200": {
-						"description": "OK",
+					"201": {
 						"$ref": "#/components/responses/order"
+					},
+					"400": {
+						"$ref": "#/components/responses/bad-credential-parameters"
+					},
+					"408": {
+						"$ref": "#/components/responses/request-timeout"
+					},
+					"401": {
+						"$ref": "#/components/responses/bad-credential"
+					},
+					"404": {
+						"$ref": "#/components/responses/no-model"
+					},
+					"404.1": {
+						"$ref": "#/components/responses/no-product"
+					},
+					"403": {
+						"description": "已下单"
+					},
+					"403.1": {
+						"description": "已经结束了"
+					},
+					"400.1": {
+						"description": "错误的订单格式"
 					}
 				},
-				"tags": ["Order"]
+				"tags": [
+					"Order"
+				]
 			}
 		},
 		"/product/{model}/{productId}/artifact": {
@@ -186,11 +363,33 @@
 				"parameters": [],
 				"responses": {
 					"200": {
-						"description": "OK",
 						"$ref": "#/components/responses/artifact"
+					},
+					"400": {
+						"$ref": "#/components/responses/bad-credential-parameters"
+					},
+					"408": {
+						"$ref": "#/components/responses/request-timeout"
+					},
+					"401": {
+						"$ref": "#/components/responses/bad-credential"
+					},
+					"404": {
+						"$ref": "#/components/responses/no-model"
+					},
+					"404.1": {
+						"$ref": "#/components/responses/no-product"
+					},
+					"404.2": {
+						"description": "生产还未结束"
+					},
+					"404.3": {
+						"description": "生产失败"
 					}
 				},
-				"tags": ["Artifact"]
+				"tags": [
+					"Artifact"
+				]
 			}
 		},
 		"/product/{model}/{productId}/job": {
@@ -229,7 +428,9 @@
 						}
 					}
 				},
-				"tags": ["Job"]
+				"tags": [
+					"Job"
+				]
 			}
 		},
 		"/product/{model}/{productId}/job/{jobId}": {
@@ -259,9 +460,29 @@
 					"200": {
 						"description": "OK",
 						"$ref": "#/components/responses/job"
+					},
+					"400": {
+						"$ref": "#/components/responses/bad-credential-parameters"
+					},
+					"408": {
+						"$ref": "#/components/responses/request-timeout"
+					},
+					"401": {
+						"$ref": "#/components/responses/bad-credential"
+					},
+					"404": {
+						"$ref": "#/components/responses/no-model"
+					},
+					"404.1": {
+						"$ref": "#/components/responses/no-product"
+					},
+					"404.2": {
+						"description": "指定的job不存在"
 					}
 				},
-				"tags": ["Job"]
+				"tags": [
+					"Job"
+				]
 			}
 		}
 	},
@@ -329,12 +550,40 @@
 			}
 		},
 		"responses": {
+			"bad-credential-parameters": {
+				"description": "非法的凭据参数",
+			},
+			"request-timeout": {
+				"description": "超时的操作",
+			},
+			"bad-credential": {
+				"description": "无效的凭据",
+			},
+			"no-model": {
+				"description": "不存在的生产型号",
+			},
+			"no-product": {
+				"description": "没有指定的生产",
+			},
+			"full-queue": {
+				"description": "达到生产队列上限",
+			},
 			"product": {
 				"description": "OK",
 				"content": {
 					"application/json": {
 						"schema": {
 							"$ref": "#/components/schemas/product"
+						}
+					}
+				}
+			},
+			"state": {
+				"description": "OK",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/product.state"
 						}
 					}
 				}
@@ -380,7 +629,7 @@
 			},
 			"id": {
 				"type": "string",
-				"format": "Hex",
+				"format": "uuid",
 				"readOnly": true
 			},
 			"message": {
@@ -394,10 +643,13 @@
 					"id": {
 						"$ref": "#/components/schemas/id"
 					},
+					"model": {
+						"type": "string"
+					},
 					"createdAt": {
 						"allOf": [
 							{
-								"$ref": "#/components/schemas/at",
+								"$ref": "#/components/schemas/at"
 							},
 							{
 								"description": "创建时间"
@@ -430,9 +682,7 @@
 							0,
 							100,
 							201,
-							202,
-							203,
-							204
+							202
 						],
 						"nullable": true,
 						"readOnly": true
@@ -443,19 +693,23 @@
 				},
 				"additionalProperties": false
 			},
+			"product.state": {
+				"type": "object",
+				"properties": {
+					"finished": {
+						"type": "boolean"
+					}
+				},
+				"additionalProperties": false
+			},
 			"order.source": {
 				"type": "object",
 				"properties": {
-					"url": {
-						"description": ""
-					}
-				}
-			},
-			"order.binary": {
-				"type": "object",
-				"properties": {
-					"url": {
-						"description": ""
+					"bucket": {
+						"type": "string"
+					},
+					"path": {
+						"type": "string"
 					}
 				}
 			},
@@ -463,35 +717,24 @@
 				"oneOf": [
 					{
 						"$ref": "#/components/schemas/order.source"
-					},
-					{
-						"$ref": "#/components/schemas/order.binary"
 					}
 				]
 			},
 			"artifact.source": {
 				"type": "object",
 				"properties": {
-					"url": {
-						"description": ""
-					}
-				}
-			},
-			"artifact.binary": {
-				"type": "object",
-				"properties": {
-					"url": {
-						"description": ""
+					"bucket": {
+						"type": "string"
+					},
+					"path": {
+						"type": "string"
 					}
 				}
 			},
 			"artifact": {
 				"oneOf": [
 					{
-						"$ref": "#/components/schemas/order.source"
-					},
-					{
-						"$ref": "#/components/schemas/order.binary"
+						"$ref": "#/components/schemas/artifact.source"
 					}
 				]
 			},
@@ -519,26 +762,6 @@
 							}
 						]
 					},
-					"visitedAt": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/at"
-							},
-							{
-								"description": "访问时间"
-							}
-						]
-					},
-					"assignedAt": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/at"
-							},
-							{
-								"description": "分配时间"
-							}
-						]
-					},
 					"startedAt": {
 						"allOf": [
 							{
@@ -559,34 +782,19 @@
 							}
 						]
 					},
-					"archivedAt": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/at"
-							},
-							{
-								"description": "归档时间"
-							}
-						]
-					},
 					"status": {
 						"type": "number",
 						"enum": [
 							0,
 							100,
 							201,
-							202,
-							203,
-							204
+							202
 						],
 						"nullable": true,
 						"readOnly": true
 					},
 					"message": {
 						"$ref": "#/components/schemas/message"
-					},
-					"extension": {
-						"nullable": true
 					}
 				},
 				"additionalProperties": false
@@ -609,6 +817,10 @@
 		{
 			"name": "Job",
 			"description": "生产的作业"
+		},
+		{
+			"name": "Development",
+			"description": "帮助研发"
 		}
 	]
 }
