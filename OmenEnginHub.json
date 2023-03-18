@@ -60,6 +60,65 @@
 				]
 			}
 		},
+		"/license": {
+			"get": {
+				"description": "读取证书信息",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"subject": {
+											"type": "string"
+										},
+										"parallel": {
+											"type": "integer"
+										},
+										"issuedAt": {
+											"$ref": "#/components/schemas/at"
+										},
+										"expiredAt": {
+											"$ref": "#/components/schemas/at"
+										}
+									},
+									"additionalProperties": false
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"License"
+				]
+			}
+		},
+		"/license/certificate": {
+			"put": {
+				"description": "上传并替换许可证书",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/octet-stream": {
+							"schema": {
+								"type": "string",
+								"format": "binary"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"License"
+				]
+			}
+		},
 		"/product/{model}": {
 			"parameters": [
 				{
@@ -551,22 +610,22 @@
 		},
 		"responses": {
 			"bad-credential-parameters": {
-				"description": "非法的凭据参数",
+				"description": "非法的凭据参数"
 			},
 			"request-timeout": {
-				"description": "超时的操作",
+				"description": "超时的操作"
 			},
 			"bad-credential": {
-				"description": "无效的凭据",
+				"description": "无效的凭据"
 			},
 			"no-model": {
-				"description": "不存在的生产型号",
+				"description": "不存在的生产型号"
 			},
 			"no-product": {
-				"description": "没有指定的生产",
+				"description": "没有指定的生产"
 			},
 			"full-queue": {
-				"description": "达到生产队列上限",
+				"description": "达到生产队列上限"
 			},
 			"product": {
 				"description": "OK",
@@ -622,7 +681,7 @@
 		"schemas": {
 			"at": {
 				"type": "string",
-				"format": "ISOString",
+				"format": "date-time",
 				"nullable": true,
 				"readOnly": true,
 				"description": "ISO标准时间戳"
@@ -744,7 +803,7 @@
 					"id": {
 						"$ref": "#/components/schemas/id"
 					},
-					"productId": {
+					"product": {
 						"$ref": "#/components/schemas/id"
 					},
 					"craft": {
@@ -803,6 +862,10 @@
 	},
 	"tags": [
 		{
+			"name": "Development",
+			"description": "帮助研发"
+		},
+		{
 			"name": "Product",
 			"description": "生产"
 		},
@@ -819,8 +882,8 @@
 			"description": "生产的作业"
 		},
 		{
-			"name": "Development",
-			"description": "帮助研发"
+			"name": "License",
+			"description": "许可操作"
 		}
 	]
 }
