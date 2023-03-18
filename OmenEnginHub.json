@@ -95,7 +95,7 @@
 				]
 			}
 		},
-		"/license/certificate": {
+		"/license/file": {
 			"put": {
 				"description": "上传并替换许可证书",
 				"requestBody": {
@@ -112,6 +112,9 @@
 				"responses": {
 					"200": {
 						"description": "OK"
+					},
+					"400": {
+						"description": "无效的许可证文件"
 					}
 				},
 				"tags": [
